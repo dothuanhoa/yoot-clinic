@@ -1,5 +1,7 @@
 package com.yoot.clinic.common.exception;
 
+import com.yoot.clinic.medical_service.exception.InvalidCodeException;
+import com.yoot.clinic.medical_service.exception.MedicalServiceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,28 @@ public class GlobalExceptionHandler {
                         fieldErrors));
     }
 
+    @ExceptionHandler(MedicalServiceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMedicalServiceException(MedicalServiceNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.ofValidation(
+                        404,
+                        "ERR-MED-001",
+                        "No Resouce found with that code",
+                        null
+                ));
+    }
+
+    @ExceptionHandler(InvalidCodeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCode(InvalidCodeException ex){
+        return ResponseEntity.status(400)
+                .body(ErrorResponse.ofValidation(
+                        400,
+                        "ERR-REQ-001",
+                        ex.getMessage(),
+                        null
+                ));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
         log.error("[Unhandled exception]", ex);
@@ -60,4 +84,5 @@ public class GlobalExceptionHandler {
                         "Internal Server Error",
                         "An unexpected error occurred"));
     }
+
 }
