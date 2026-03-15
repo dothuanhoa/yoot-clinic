@@ -95,4 +95,10 @@ public class PatientServiceImpl implements PatientService {
         patient.setDeleted(true);
         patient.setDeletedAt(LocalDateTime.now());
     }
+
+    @Override
+    public Patient findPatientById(Long id) {
+        return patientRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", id));
+    }
 }
